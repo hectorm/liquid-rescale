@@ -11,21 +11,21 @@ TMP_DIR=$(mktemp -d)
 trap 'rm -rf "${TMP_DIR:?}"' EXIT
 
 # Generate initial image
-IMG_REFERENCE="${TMP_DIR:?}"/ref.jpg
-convert -scale "${IMG_SIZE:?}" "${IMG_IN:?}" "${IMG_REFERENCE:?}"
+IMG_REFERENCE="${TMP_DIR:?}"/ref.png
+convert -alpha set -scale "${IMG_SIZE:?}!" "${IMG_IN:?}" "${IMG_REFERENCE:?}"
 
 # Generate frames
 IMG_FRAMES=
 i=0; while [ "${i:?}" -le 85 ]; do
 	printf '\r\033[K%s' "Generating frames... $((i*100/85))%"
-	IMG_FRAME="${TMP_DIR:?}"/"${i:?}".jpg
+	IMG_FRAME="${TMP_DIR:?}"/"${i:?}".png
 	IMG_FRAMES="${IMG_FRAMES?} ${IMG_FRAME:?}"
-	convert -liquid-rescale "$((100-i))%" "${IMG_REFERENCE:?}" "${IMG_FRAME:?}"
-	convert -scale "${IMG_SIZE:?}" "${IMG_FRAME:?}" "${IMG_FRAME:?}"
+	convert -alpha set -liquid-rescale "$((100-i))%" "${IMG_REFERENCE:?}" "${IMG_FRAME:?}"
+	convert -alpha set -scale "${IMG_SIZE:?}!" "${IMG_FRAME:?}" "${IMG_FRAME:?}"
 	i=$((i+1))
 done
 
 # Merge frames
 printf '\n%s\n' 'Merging frames...'
 # shellcheck disable=SC2086
-convert -delay 6 -loop 0 ${IMG_FRAMES:?} "${IMG_OUT:?}"
+convert -alpha set -dispose previous -coalesce -delay 6 -loop 0 ${IMG_FRAMES:?} "${IMG_OUT:?}"
