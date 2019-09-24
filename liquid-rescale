@@ -16,7 +16,7 @@ convert -scale "${IMG_SIZE:?}" "${IMG_IN:?}" "${IMG_REFERENCE:?}"
 
 # Generate frames
 IMG_FRAMES=
-i=0; while [ "${i}" -le 85 ]; do
+i=0; while [ "${i:?}" -le 85 ]; do
 	printf '\r\033[K%s' "Generating frames... $((i*100/85))%"
 	IMG_FRAME="${TMP_DIR:?}"/"${i:?}".jpg
 	IMG_FRAMES="${IMG_FRAMES?} ${IMG_FRAME:?}"
